@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FBS Фулфилмент Калькулятор</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --error: #e74c3c;
+            --background: linear-gradient(135deg, #f5f7fa 0%, #e4e7fb 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text: #333333;
+            --text-light: #6c757d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(67, 97, 238, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(72, 149, 239, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(46, 204, 113, 0.05) 0%, transparent 30%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+            transform: rotate(30deg);
+            animation: shine 6s infinite linear;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .calculator {
+            padding: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .input-section, .result-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .card-title i {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+
+        label i {
+            color: var(--primary);
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 18px 14px 45px;
+            background: rgba(245, 247, 250, 0.8);
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            color: var(--text);
+            outline: none;
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card.storage {
+            background: linear-gradient(135deg, var(--success) 0%, #27ae60 100%);
+        }
+
+        .result-card h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .total-price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin: 15px 0;
+            transition: all 0.5s ease;
+        }
+
+        .formula {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-top: 15px;
+        }
+
+        .formula-details {
+            background: var(--light);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .formula-details h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .formula-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 1.1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .formula-item:hover {
+            transform: translateX(5px);
+        }
+
+        .formula-item:last-child {
+            border-bottom: none;
+        }
+
+        .storage-section {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(46, 204, 113, 0.08);
+            border-radius: 12px;
+            border-left: 4px solid var(--success);
+        }
+
+        .disclaimer {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(243, 156, 18, 0.08);
+            border-radius: 12px;
+            text-align: center;
+            font-style: italic;
+            border-left: 4px solid var(--warning);
+            grid-column: 1 / -1;
+            color: var(--text);
+        }
+
+        .decoration {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            filter: blur(30px);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .decoration:nth-child(1) {
+            top: 10%;
+            left: 5%;
+        }
+
+        .decoration:nth-child(2) {
+            bottom: 10%;
+            right: 5%;
+            background: radial-gradient(circle, var(--success) 0%, transparent 70%);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(30deg) translateX(-100%); }
+            20% { transform: rotate(30deg) translateX(100%); }
+            100% { transform: rotate(30deg) translateX(100%); }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.1); }
+            70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(243, 156, 18, 0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @media (max-width: 768px) {
+            .calculator {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .total-price {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calculator"></i> Калькулятор FBS фулфилмента</h1>
+            <p class="subtitle">Рассчитайте стоимость обработки и хранения ваших товаров</p>
+        </div>
+        
+        <div class="calculator">
+            <div class="input-section">
+                <div class="card floating">
+                    <div class="card-title">
+                        <i class="fas fa-cube"></i>
+                        <h3>Параметры товара</h3>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="d"><i class="fas fa-gift"></i> Дополнительные вложения (D)</label>
+                        <div class="input-container">
+                            <span class="input-icon"><i class="fas fa-plus-circle"></i></span>
+                            <input type="number" id="d" min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="e"><i class="fas fa-tag"></i> Дополнительная маркировка (E)</label>
+                        <div class="input-container">
+                            <span class="input-icon"><i class="fas fa-tags"></i></span>
+                            <input type="number" id="e" min="0" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="length"><i class="fas fa-ruler-horizontal"></i> Длина товара, см (a)</label>
+                        <div class="input-container">
+                            <span class="input-icon"><i class="fas fa-arrows-alt-h"></i></span>
+                            <input type="number" id="length" min="0" step="0.1" value="10">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="width"><i class="fas fa-ruler-vertical"></i> Ширина товара, см (b)</label>
+                        <div class="input-container">
+                            <span class="input-icon"><i class="fas fa-arrows-alt-v"></i></span>
+                            <input type="number" id="width" min="0" step="0.1" value="10">
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="height"><i class="fas fa-ruler"></i> Высота товара, см (c)</label>
+                        <div class="input-container">
+                            <span class="input-icon"><i class="fas fa-arrows-alt"></i></span>
+                            <input type="number" id="height" min="0" step="0.1" value="10">
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="calculate-btn">
+                        <i class="fas fa-calculator"></i> Рассчитать стоимость
+                    </button>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <div class="result-card floating">
+                    <h2><i class="fas fa-box-open"></i> Стоимость фулфилмента</h2>
+                    <div class="total-price" id="total-price">0.00 ₽</div>
+                    <p class="formula">По формуле: 25 + (D × 3) + (E × 5) + 1500 × (a×b×c в м³)</p>
+                </div>
+                
+                <div class="result-card storage floating">
+                    <h2><i class="fas fa-warehouse"></i> Стоимость хранения (1 день)</h2>
+                    <div class="total-price" id="storage-total">0.00 ₽</div>
+                    <p class="formula">53 ₽/м³ в день × объём × 1 день</p>
+                </div>
+                
+                <div class="formula-details floating">
+                    <h3><i class="fas fa-list-alt"></i> Детализация расчётов</h3>
+                    
+                    <div class="formula-item">
+                        <span>Стоимость обработки товара:</span>
+                        <span>25 ₽</span>
+                    </div>
+                    <div class="formula-item">
+                        <span>Дополнительные вложения (D × 3):</span>
+                        <span id="d-cost">0 ₽</span>
+                    </div>
+                    <div class="formula-item">
+                        <span>Дополнительная маркировка (E × 5):</span>
+                        <span id="e-cost">0 ₽</span>
+                    </div>
+                    <div class="formula-item">
+                        <span>Стоимость доставки (1500 × объём):</span>
+                        <span id="delivery-cost">0 ₽</span>
+                    </div>
+                    
+                    <div class="storage-section">
+                        <h3><i class="fas fa-pallet"></i> Расчёт хранения (1 день)</h3>
+                        <div class="formula-item">
+                            <span>Объём товара (a × b × c):</span>
+                            <span id="volume">0 м³</span>
+                        </div>
+                        <div class="formula-item">
+                            <span>Стоимость хранения (53 ₽/м³):</span>
+                            <span id="storage-cost">0 ₽</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i> Расчет произведен без учета услуг упаковки
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Анимация чисел
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = end > start ? 1 : -1;
+            const stepTime = Math.abs(Math.floor(duration / range));
+            
+            // Для небольших значений делаем анимацию быстрее
+            const adjustedStepTime = Math.max(10, Math.min(50, stepTime));
+            
+            let current = start;
+            const timer = setInterval(() => {
+                current += increment;
+                element.textContent = current.toFixed(2) + ' ₽';
+                
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    clearInterval(timer);
+                    element.textContent = end.toFixed(2) + ' ₽';
+                }
+            }, adjustedStepTime);
+        }
+
+        function calculate() {
+            // Получаем значения из полей ввода
+            const d = parseFloat(document.getElementById('d').value) || 0;
+            const e = parseFloat(document.getElementById('e').value) || 0;
+            const lengthCm = parseFloat(document.getElementById('length').value) || 0;
+            const widthCm = parseFloat(document.getElementById('width').value) || 0;
+            const heightCm = parseFloat(document.getElementById('height').value) || 0;
+            
+            // Конвертируем сантиметры в метры для расчета
+            const lengthM = lengthCm / 100;
+            const widthM = widthCm / 100;
+            const heightM = heightCm / 100;
+            
+            // Рассчитываем компоненты стоимости фулфилмента
+            const processingCost = 25;
+            const dCost = d * 3;
+            const eCost = e * 5;
+            const volume = lengthM * widthM * heightM; // объем в кубических метрах
+            const deliveryCost = 1500 * volume;
+            
+            // Общая стоимость фулфилмента
+            const fulfillmentCost = processingCost + dCost + eCost + deliveryCost;
+            
+            // Рассчитываем стоимость хранения (фиксировано 1 день)
+            const storageCost = 53 * volume;
+            
+            // Анимируем изменение значений
+            const totalPriceElement = document.getElementById('total-price');
+            const storageTotalElement = document.getElementById('storage-total');
+            
+            // Убираем символ валюты для корректного парсинга
+            const cleanTotal = parseFloat(totalPriceElement.textContent.replace(' ₽', '')) || 0;
+            const cleanStorage = parseFloat(storageTotalElement.textContent.replace(' ₽', '')) || 0;
+            
+            animateValue(totalPriceElement, cleanTotal, fulfillmentCost, 800);
+            animateValue(storageTotalElement, cleanStorage, storageCost, 800);
+            
+            // Обновляем остальные значения
+            document.getElementById('d-cost').textContent = dCost.toFixed(2) + ' ₽';
+            document.getElementById('e-cost').textContent = eCost.toFixed(2) + ' ₽';
+            document.getElementById('delivery-cost').textContent = deliveryCost.toFixed(2) + ' ₽';
+            document.getElementById('volume').textContent = volume.toFixed(6) + ' м³';
+            document.getElementById('storage-cost').textContent = storageCost.toFixed(2) + ' ₽';
+            
+            // Анимация карточек
+            const cards = document.querySelectorAll('.card, .result-card, .formula-details');
+            cards.forEach(card => {
+                card.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    card.style.transform = 'translateY(0)';
+                }, 300);
+            });
+        }
+        
+        // Рассчитать при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализируем значения
+            calculate();
+            
+            // Добавляем обработчики изменения для автоматического пересчёта
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('input', calculate);
+            });
+            
+            document.getElementById('calculate-btn').addEventListener('click', calculate);
+        });
+    </script>
+</body>
+</html>
